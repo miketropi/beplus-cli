@@ -1,6 +1,6 @@
 {
 	"name": "beplus-cli",
-	"description": "...",
+	"description": "a CLI helpers tool for Beplus project.",
 	"version": "0.0.2",
 	"license": "MIT",
 	"bin": {

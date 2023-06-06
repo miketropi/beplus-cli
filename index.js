@@ -19,7 +19,7 @@ const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
 
-const ENDPOINT = 'https://api-ap-northeast-1.hygraph.com/v2/clijly8cu041k01uoe0f8chsb/master';
+const { ENDPOINT, PATH_AUTH_LOG } = require('./config')();
 
 (async () => {
 	init({ clear });
@@ -60,7 +60,7 @@ const ENDPOINT = 'https://api-ap-northeast-1.hygraph.com/v2/clijly8cu041k01uoe0f
 					pass: password,
 				});
 
-				fs.writeFile('./auth.log', authBody, err => {
+				fs.writeFile(PATH_AUTH_LOG, authBody, err => {
 					if (err) {
 						console.error(err);
 					}
@@ -75,8 +75,13 @@ const ENDPOINT = 'https://api-ap-northeast-1.hygraph.com/v2/clijly8cu041k01uoe0f
 	 * Beplus Logout
 	 */
 	if(input.includes(`logout`)) {
-		fs.unlinkSync('./auth.log');
-		console.log('Logout successful.');
+		let path = PATH_AUTH_LOG;
+		if (fs.existsSync(path)) {
+			fs.unlinkSync(path);
+			console.log('Logout successful.');
+		} else {
+			console.log('You are not logged in.');
+		}
 	}
 
 	/**
@@ -122,6 +127,8 @@ const ENDPOINT = 'https://api-ap-northeast-1.hygraph.com/v2/clijly8cu041k01uoe0f
 	 * sFtp
 	 */
 	if(input.includes(`sftp`)) {
-
+		const sftpHelpers = require('./src/features/sftpHelpers'); 
+		let [command, action, ...args] = input;
+		sftpHelpers(action, ...args) 
 	}
 })();
