@@ -28,7 +28,7 @@ const flags = {
 		type: `string`,
 		alias: `n`,
 		default: `project-pack`,
-		desc: `Name folder`
+		desc: `Name`
 	}
 };
 

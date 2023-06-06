@@ -22,3 +22,9 @@ $ be auth <username> <password>
 ```bash
 $ be logout
 ```
+
+#### Seach sFTP Config
+```bash
+$ be search-sftp              # get all
+$ be search-sftp <keywords>   # serach by keywords
+```
