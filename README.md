@@ -12,3 +12,13 @@ $ be pp-init
 or
 $ be pp-init --name folder-name
 ```
+
+#### Auth 
+```bash
+$ be auth <username> <password>
+```
+
+#### Logout 
+```bash
+$ be logout
+```
