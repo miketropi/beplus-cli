@@ -63,7 +63,7 @@ const { clear, debug } = flags;
 					}
 				});
 			} else {
-				console.log('Auth fail!!!');
+				console.log('Auth failed!!!');
 			}
 		});
 	}
