@@ -1,7 +1,7 @@
 {
 	"name": "beplus-cli",
 	"description": "a CLI helpers tool for Beplus project.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"license": "MIT",
 	"bin": {
 		"be": "index.js"
