@@ -1,0 +1,37 @@
+<?php 
+/**
+ * Auth 
+ * 
+ * @version 1.0.0
+ * @since 1.0.0 
+ * @author Mike
+ */
+
+// var_dump($_REQUEST);
+if(!isset($_REQUEST) || count($_REQUEST) == 0) {
+  http_response_code(403);
+  return;
+} 
+
+$users = [
+  [
+    'display_name' => '...',
+    'username' => '...',
+    'password' => '...'
+  ],
+];
+
+$found_key = array_search($_REQUEST['user'], array_column($users, 'username'));
+
+if($found_key === false) {
+  http_response_code(403);
+  return;
+}
+
+if($users[$found_key]['password'] == $_REQUEST['pass']) {
+  echo 'Auth successful!!!';
+} else {
+  http_response_code(403);
+  return;
+}
+
