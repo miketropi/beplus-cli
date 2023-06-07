@@ -95,7 +95,6 @@ const { ENDPOINT, PATH_AUTH_LOG } = require('./config')();
 				id
 				name
 				lastUpdatedMember
-				config
 			}
 		}
 		`;
@@ -110,6 +109,12 @@ const { ENDPOINT, PATH_AUTH_LOG } = require('./config')();
 		})
 			.then(r => r.json())
 			.then(data => {
+
+				if(data.data.sFtpInformations.length == 0) {
+					console.log('No items found!');
+					return;
+				}
+
 				var table = new Table({
 					head: Object.keys(data.data.sFtpInformations[0])
 				});

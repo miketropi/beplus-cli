@@ -1,22 +1,89 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
+const { ENDPOINT, TOKEN } = require('../../config')();
 
-const { ENDPOINT } = require('../../config')();
+const _Request = async (query, variables = {}, method = 'POST') => {
+  const result = await fetch(ENDPOINT, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: "Bearer " + TOKEN,
+    },
+    body: JSON.stringify({ query, variables }),
+  })
+  
+  return await result.json();
+}
 
 module.exports = function() {
   return {
-    SFTP_ADD: () => {
-      const _CREATE = `mutation CreateSFTP {
-        createSFtpInformation(data: {config: '${ data }', lastUpdatedMember: "mike", name: "${ name }"}) {
+    SFTP_ADD: async ({ name, data }) => {
+      const _CREATE = `mutation CreateSFTP($config: String!) {
+        createSFtpInformation(data: {config: $config, lastUpdatedMember: "mike", name: "${ name }"}) {
           id
         }
       }`;
 
+      const variables = { config: data };
+      try {
+        const result = await _Request(_CREATE, variables);
+        return result.data.createSFtpInformation.id;
+      } catch (e) {
+        console.error(e.message);
+        return false;
+      }
+      
+    },
+    SFTP_PUBLIC: async (id) => {
       const _PUBLISH = `mutation PublishSFTP {
-        publishSFtpInformation(where: {id: "clik1d9ytcq900b1cmpj0y1h7"}) {
+        publishSFtpInformation(where: {id: "${ id }"}) {
           id
         }
       }`;
+
+      try {
+        const result = await _Request(_PUBLISH);
+        return result.data.publishSFtpInformation.id;
+      } catch (e) {
+        console.error(e.message);
+        return false;
+      }
+    },
+    SFTP_SHOW: async (id) => {
+      const _QUERY = `query GetSFTP {
+        sFtpInformation(where: {id: "${ id }"}) {
+          id
+          name
+          lastUpdatedMember
+          config
+          createdAt
+          updatedAt
+        }
+      }`;
+
+      try {
+        const result = await _Request(_QUERY);
+        return result.data.sFtpInformation;
+      } catch (e) {
+        console.error(e.message);
+        return false;
+      }
+    },
+    SFTP_DELETE: async (id) => {
+      const _QUERY = `mutation SftpDelete {
+        deleteSFtpInformation(where: {id: "${ id }"}) {
+          id
+        }
+      }`;
+
+      try {
+        const result = await _Request(_QUERY);
+        return true;
+      } catch (e) {
+        console.error(e.message);
+        return false;
+      }
     }
   }  
 }
