@@ -1,6 +1,7 @@
 const fs = require('fs');
+const fse = require('fs-extra');
 const Confirm = require('prompt-confirm');
-const { SFTP_ADD, SFTP_PUBLIC, SFTP_SHOW, SFTP_DELETE } = require('../api/index')();
+const { SFTP_ADD, SFTP_PUBLIC, SFTP_SHOW, SFTP_DELETE, SFTP_UPDATE } = require('../api/index')();
 
 const actions = {
   'add': (name, path) => {
@@ -32,8 +33,35 @@ const actions = {
     }
     
   },
-  'update': (id, name, path) => {
-    console.log(path)
+  'update': async (id, name, path) => {
+    if (fs.existsSync(path)) {
+      fs.readFile(path, 'utf8', async (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        const _id = await SFTP_UPDATE({
+          id, 
+          name,
+          data
+        });
+
+        if(_id == false) {
+          console.log("Error: Update failed, please try again!");
+          return;
+        }
+
+        const id_publish = await SFTP_PUBLIC(_id);
+        if(id_publish == false) {
+          console.log("Error: Publish failed, please try again!");
+          return;
+        }
+
+        console.log("Updated successful.");
+      })
+    }
+    
   },
   'delete': async (id) => {
     const prompt = new Confirm(`Are you sure remove this ID?`);
@@ -49,8 +77,16 @@ const actions = {
     });
     return;
   },
-  'load': (id, path) => {
-    console.log(id, path)
+  'put': async (id, path) => {
+    const { config } = await SFTP_SHOW(id);
+
+    fse.outputFile(path, config)
+      .then(() => {
+        console.log("successfully.");
+      })
+      .catch(err => {
+        console.error(err)
+      });
   },
   'show': async (id) => {
     const result = await SFTP_SHOW(id);

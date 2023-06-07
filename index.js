@@ -19,7 +19,7 @@ const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
 
-const { ENDPOINT, PATH_AUTH_LOG } = require('./config')();
+const { AUTH_URL, ENDPOINT, PATH_AUTH_LOG } = require('./config')();
 
 (async () => {
 	init({ clear });
@@ -47,7 +47,7 @@ const { ENDPOINT, PATH_AUTH_LOG } = require('./config')();
 		}
 
 		request.post({
-			url: `https://auth-beplus-cli.beplusprojects.com/auth.php`,
+			url: AUTH_URL,
 			form: {
 				user: username,
 				pass: password,

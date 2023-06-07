@@ -84,6 +84,31 @@ module.exports = function() {
         console.error(e.message);
         return false;
       }
+    },
+    SFTP_UPDATE: async ({ id, name, data }) => {
+      const _QUERY = `mutation SftpUpdate($config: String, $lastUpdatedMember:String, $name: String, $id: ID) {
+        updateSFtpInformation(
+          data: {config: $config, lastUpdatedMember: $lastUpdatedMember, name: $name}
+          where: {id: $id}
+        ) {
+          id
+        }
+      }`;
+
+      const variables = {
+        "config": data,
+        "lastUpdatedMember": "mike",
+        name,
+        id
+      }
+
+      try {
+        const result = await _Request(_QUERY, variables);
+        return result.data.updateSFtpInformation.id;
+      } catch (e) {
+        console.error(e.message);
+        return false;
+      }
     }
   }  
 }
