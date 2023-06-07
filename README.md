@@ -23,22 +23,23 @@ $ be auth <username> <password>
 $ be logout
 ```
 
-#### Seach sFTP Config
-```bash
-$ be search-sftp              # get all
-$ be search-sftp <keywords>   # serach by keywords
-```
-
 #### sFTP
 ```bash
-$ be sftp add <name> <path_file_ftp_config>
-example: be sftp add "https://bearsthemes.com" ./sftp/config.json 
+$ be sftp list              # get all
+$ be sftp list <keywords>   # list by keywords  
 
+$ be sftp add <name> <path_file_ftp_config>
+# example: be sftp add "https://bearsthemes.com" ./sftp/config.json 
+
+# Update
 $ be sftp update <id> <name> <path_file_ftp_config>
 
+# Delete
 $ be sftp delete <id>
 
+# Show
 $ be sftp show <id>
 
+# Put to file config
 $ be sftp put <id> <path>
 ```

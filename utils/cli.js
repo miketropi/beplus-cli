@@ -34,8 +34,7 @@ const flags = {
 
 const commands = { help: { desc: `Print help info` },
 	'pp-init': { desc: `Setup "project pack" resource` },
-	'search-sftp': { desc: `Search sftp infor` },
-	'sftp': { desc: `add / update / remove / show / put actions` }
+	'sftp': { desc: `list / add / update / remove / show / put actions` }
 };
 
 const helpText = meowHelp({

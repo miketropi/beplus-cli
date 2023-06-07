@@ -1,10 +1,12 @@
 const fs = require('fs');
 const fse = require('fs-extra');
+const Table = require('cli-table');
 const Confirm = require('prompt-confirm');
-const { SFTP_ADD, SFTP_PUBLIC, SFTP_SHOW, SFTP_DELETE, SFTP_UPDATE } = require('../api/index')();
+const { SFTP_ADD, SFTP_PUBLIC, SFTP_SHOW, SFTP_DELETE, SFTP_UPDATE, SFTP_LIST } = require('../api/index')();
+const { isAuth } = require('../helpers')();
 
 const actions = {
-  'add': (name, path) => {
+  'add': (user, name, path) => {
     if (fs.existsSync(path)) {
       fs.readFile(path, 'utf8', async (err, data) => {
         if (err) {
@@ -14,7 +16,8 @@ const actions = {
 
         const id = await SFTP_ADD({
           name, 
-          data
+          data,
+          user
         });
 
         if(id == false) {
@@ -33,7 +36,7 @@ const actions = {
     }
     
   },
-  'update': async (id, name, path) => {
+  'update': async (user, id, name, path) => {
     if (fs.existsSync(path)) {
       fs.readFile(path, 'utf8', async (err, data) => {
         if (err) {
@@ -44,7 +47,8 @@ const actions = {
         const _id = await SFTP_UPDATE({
           id, 
           name,
-          data
+          data,
+          user
         });
 
         if(_id == false) {
@@ -63,7 +67,7 @@ const actions = {
     }
     
   },
-  'delete': async (id) => {
+  'delete': async (user, id) => {
     const prompt = new Confirm(`Are you sure remove this ID?`);
     prompt.ask(async function(answer) {
       if(answer != true) return;
@@ -77,7 +81,7 @@ const actions = {
     });
     return;
   },
-  'put': async (id, path) => {
+  'put': async (user, id, path) => {
     const { config } = await SFTP_SHOW(id);
 
     fse.outputFile(path, config)
@@ -88,15 +92,43 @@ const actions = {
         console.error(err)
       });
   },
-  'show': async (id) => {
+  'show': async (user, id) => {
     const result = await SFTP_SHOW(id);
     console.log(result);
+  },
+  'list': async (user, search) => {
+    search = search ?? '';
+    const result = await SFTP_LIST(search);
+
+    if(result.length == 0) {
+      console.log('No items found!');
+      return;
+    }
+
+    var table = new Table({
+      head: Object.keys(result[0])
+    });
+
+    result.forEach((item, _index) => {
+      let _item = Object.values(item).map(_i => (_i ? _i : ''));
+      table.push(_item);
+    });
+
+    console.log(table.toString());
   }
 }
 
-module.exports = function sftpHelpers (action, ...args) {
+module.exports = async function sftpHelpers (action, ...args) {
+  const Auth = await isAuth();
+  if(Auth == false) {
+    console.log('Please login.');
+    return;
+  }
+
+  const { user } = Auth;
+
   if(actions[action]) {
-    actions[action](...args);
+    actions[action](user, ...args);
   } else {
     console.log('Action not found! :(');
   }

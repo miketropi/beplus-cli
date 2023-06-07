@@ -18,9 +18,9 @@ const _Request = async (query, variables = {}, method = 'POST') => {
 
 module.exports = function() {
   return {
-    SFTP_ADD: async ({ name, data }) => {
+    SFTP_ADD: async ({ name, data, user }) => {
       const _CREATE = `mutation CreateSFTP($config: String!) {
-        createSFtpInformation(data: {config: $config, lastUpdatedMember: "mike", name: "${ name }"}) {
+        createSFtpInformation(data: {config: $config, lastUpdatedMember: "${ user }", name: "${ name }"}) {
           id
         }
       }`;
@@ -85,7 +85,7 @@ module.exports = function() {
         return false;
       }
     },
-    SFTP_UPDATE: async ({ id, name, data }) => {
+    SFTP_UPDATE: async ({ id, name, data, user }) => {
       const _QUERY = `mutation SftpUpdate($config: String, $lastUpdatedMember:String, $name: String, $id: ID) {
         updateSFtpInformation(
           data: {config: $config, lastUpdatedMember: $lastUpdatedMember, name: $name}
@@ -97,7 +97,7 @@ module.exports = function() {
 
       const variables = {
         "config": data,
-        "lastUpdatedMember": "mike",
+        "lastUpdatedMember": user,
         name,
         id
       }
@@ -105,6 +105,23 @@ module.exports = function() {
       try {
         const result = await _Request(_QUERY, variables);
         return result.data.updateSFtpInformation.id;
+      } catch (e) {
+        console.error(e.message);
+        return false;
+      }
+    },
+    SFTP_LIST: async (search) => {
+      const _QUERY = `query searchsFtpConfig {
+        sFtpInformations(where: {_search: "${ search }"}) {
+          id
+          name
+          lastUpdatedMember
+        }
+      }`;
+
+      try {
+        const result = await _Request(_QUERY);
+        return result.data.sFtpInformations;
       } catch (e) {
         console.error(e.message);
         return false;

@@ -85,50 +85,6 @@ const { AUTH_URL, ENDPOINT, PATH_AUTH_LOG } = require('./config')();
 	}
 
 	/**
-	 * Search sFTP Config
-	 */
-	if(input.includes(`search-sftp`)) {
-		let [command, searchName] = input;
-		searchName = searchName ?? '';
-		const _SEARCH_SFTP = `query searchsFtpConfig {
-			sFtpInformations(where: {_search: "${ searchName }"}) {
-				id
-				name
-				lastUpdatedMember
-			}
-		}
-		`;
-
-		fetch(ENDPOINT, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify({ query: _SEARCH_SFTP }),
-		})
-			.then(r => r.json())
-			.then(data => {
-
-				if(data.data.sFtpInformations.length == 0) {
-					console.log('No items found!');
-					return;
-				}
-
-				var table = new Table({
-					head: Object.keys(data.data.sFtpInformations[0])
-				});
-
-				data.data.sFtpInformations.forEach((item, _index) => {
-					let _item = Object.values(item).map(_i => (_i ? _i : ''));
-					table.push(_item);
-				});
-
-				console.log(table.toString());
-			})
-	}
-
-	/**
 	 * sFtp
 	 */
 	if(input.includes(`sftp`)) {
