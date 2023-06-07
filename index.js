@@ -12,14 +12,12 @@ const log = require('./utils/log');
 const shell = require('shelljs');
 const request = require('request');
 const fs = require('fs');
-const fetch = require('node-fetch');
-const Table = require('cli-table');
 
 const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
 
-const { AUTH_URL, ENDPOINT, PATH_AUTH_LOG } = require('./config')();
+const { AUTH_URL, PATH_AUTH_LOG } = require('./config')();
 
 (async () => {
 	init({ clear });
